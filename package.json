@@ -27,7 +27,6 @@
 		"node": ">=4"
 	},
 	"scripts": {
-		"postinstall": "node imagemin-mozjpeg/mozjpeg/lib/install.js",
 		"test": "xo && ava"
 	},
 	"files": [
