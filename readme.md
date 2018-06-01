@@ -26,7 +26,7 @@ $ imagemin --help
 	Options
 	  -p, --plugin   Override the default plugins
 	  -o, --out-dir  Output directory
-	  -w, --overwrite overwrite the file
+	  -w, --overwrite overwrite the file, default false
 
 	Examples
 	  $ imagemin images/* --out-dir=build

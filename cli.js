@@ -17,7 +17,7 @@ const cli = meow(`
 	Options
 	  -p, --plugin   Override the default plugins
 	  -o, --out-dir  Output directory
-	  -w, --overwrite overwrite the file
+	  -w, --overwrite overwrite the file, default false
 
 	Examples
 	  $ imagemin images/* --out-dir=build
@@ -67,7 +67,7 @@ const requirePlugins = plugins => plugins.map(x => {
 const run = (input, opts) => {
 	opts = Object.assign({
 		plugin: DEFAULT_PLUGINS,
-		overwrite: true
+		overwrite: false
 	}, opts);
 
 	const use = requirePlugins(arrify(opts.plugin));
