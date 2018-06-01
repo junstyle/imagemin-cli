@@ -28,7 +28,7 @@
   },
   "files": [
     "index.js",
-    "imagemin-mozjpeg"
+    "mozjpeg"
   ],
   "keywords": [
     "compress",
