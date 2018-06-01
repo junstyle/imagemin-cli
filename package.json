@@ -69,7 +69,6 @@
 		"pify": "^2.3.0",
 		"xo": "*"
 	},
-	"optionalDependencies": {},
 	"xo": {
 		"rules": {
 			"node/process-exit-as-throw": 2
