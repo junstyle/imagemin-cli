@@ -22,8 +22,8 @@ bin.run(['-version'], err => {
 			`--prefix="${bin.dest()}" --bindir="${bin.dest()}" --libdir="${bin.dest()}"`
 		].join(' ');
 
-		binBuild.url('https://github.com/mozilla/mozjpeg/releases/download/v3.2/mozjpeg-3.3-release-source.tar.gz', [
-			'autoreconf -fiv',
+		binBuild.url('https://github.com/mozilla/mozjpeg/releases/download/v3.2/mozjpeg-3.2-release-source.tar.gz', [
+			// 'autoreconf -fiv',
 			cfg,
 			`make -j${cpuNum}`,
 			`make install -j${cpuNum}`
