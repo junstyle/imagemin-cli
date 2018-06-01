@@ -52,11 +52,16 @@
 		"ora": "^2.1.0",
 		"plur": "^3.0.1",
 		"strip-indent": "^2.0.0",
-		"execa": "^0.10.0",
-		"p-finally": "^1.0.0",
+		"file-type": "^8.0.0",
+		"globby": "^8.0.1",
+		"make-dir": "^1.3.0",
+		"p-pipe": "^1.2.0",
 		"pify": "^3.0.0",
-		"rimraf": "^2.6.2",
-		"tempfile": "^2.0.0"
+		"replace-ext": "^1.0.0",
+		"imagemin-gifsicle": "^5.2.0",
+		"imagemin-mozjpeg": "^7.0.0",
+		"imagemin-optipng": "^5.2.1",
+		"imagemin-svgo": "^6.0.0"
 	},
 	"devDependencies": {
 		"ava": "*",
@@ -64,12 +69,7 @@
 		"pify": "^2.3.0",
 		"xo": "*"
 	},
-	"optionalDependencies": {
-		"imagemin-gifsicle": "^5.2.0",
-		"imagemin-mozjpeg": "^7.0.0",
-		"imagemin-optipng": "^5.2.1",
-		"imagemin-svgo": "^6.0.0"
-	},
+	"optionalDependencies": {},
 	"xo": {
 		"rules": {
 			"node/process-exit-as-throw": 2
