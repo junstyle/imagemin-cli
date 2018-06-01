@@ -3,7 +3,7 @@
 const arrify = require('arrify');
 const meow = require('meow');
 const getStdin = require('get-stdin');
-const imagemin = require('imagemin');
+const imagemin = require('./imagemin');
 const ora = require('ora');
 const plur = require('plur');
 const stripIndent = require('strip-indent');
@@ -17,6 +17,7 @@ const cli = meow(`
 	Options
 	  -p, --plugin   Override the default plugins
 	  -o, --out-dir  Output directory
+	  -w, --overwrite overwrite the file
 
 	Examples
 	  $ imagemin images/* --out-dir=build
@@ -24,19 +25,25 @@ const cli = meow(`
 	  $ cat foo.png | imagemin > foo-optimized.png
 	  $ imagemin --plugin=pngquant foo.png > foo-optimized.png
 `, {
-	string: [
-		'plugin',
-		'out-dir'
-	],
-	alias: {
-		p: 'plugin',
-		o: 'out-dir'
-	}
-});
+		flags: {
+			plugin: {
+				type: 'string',
+				alias: 'p',
+			},
+			outDir: {
+				type: 'string',
+				alias: 'o',
+			},
+			overwrite: {
+				type: 'boolean',
+				alias: 'w',
+			}
+		}
+	});
 
 const DEFAULT_PLUGINS = [
 	'gifsicle',
-	'jpegtran',
+	'mozjpeg',
 	'optipng',
 	'svgo'
 ];
@@ -58,21 +65,24 @@ const requirePlugins = plugins => plugins.map(x => {
 });
 
 const run = (input, opts) => {
-	opts = Object.assign({plugin: DEFAULT_PLUGINS}, opts);
+	opts = Object.assign({
+		plugin: DEFAULT_PLUGINS,
+		overwrite: true
+	}, opts);
 
 	const use = requirePlugins(arrify(opts.plugin));
 	const spinner = ora('Minifying images');
 
 	if (Buffer.isBuffer(input)) {
-		imagemin.buffer(input, {use}).then(buf => process.stdout.write(buf));
+		imagemin.buffer(input, { use }).then(buf => process.stdout.write(buf));
 		return;
 	}
 
-	if (opts.outDir) {
+	if (opts.outDir || opts.overwrite) {
 		spinner.start();
 	}
 
-	imagemin(input, opts.outDir, {use})
+	imagemin(input, opts.outDir, { use })
 		.then(files => {
 			if (!opts.outDir && files.length === 0) {
 				return;
