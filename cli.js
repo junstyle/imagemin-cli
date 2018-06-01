@@ -90,7 +90,7 @@ const run = (input, opts) => {
 		spinner.start();
 	}
 
-	imagemin(input, opts.outDir, { use })
+	imagemin(input, opts.outDir, { use: use, overwrite: opts.overwrite })
 		.then(files => {
 			if (!opts.outDir && files.length === 0) {
 				return;
