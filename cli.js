@@ -78,6 +78,10 @@ const run = (input, opts) => {
 		return;
 	}
 
+	if (opts.overwrite) {
+		opts.outDir = 'overwrite';
+	}
+
 	if (opts.outDir || opts.overwrite) {
 		spinner.start();
 	}
