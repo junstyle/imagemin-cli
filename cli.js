@@ -52,15 +52,19 @@ const requirePlugins = plugins => plugins.map(x => {
 	try {
 		return require(`imagemin-${x}`)();
 	} catch (err) {
-		console.error(stripIndent(`
-			Unknown plugin: ${x}
+		try {
+			return require(`./imagemin-${x}`)();
+		} catch (err) {
+			console.error(stripIndent(`
+				Unknown plugin: ${x}
 
-			Did you forget to install the plugin?
-			You can install it with:
+				Did you forget to install the plugin?
+				You can install it with:
 
-			  $ npm install -g imagemin-${x}
-		`).trim());
-		process.exit(1);
+				$ npm install -g imagemin-${x}
+			`).trim());
+			process.exit(1);
+		}
 	}
 });
 
