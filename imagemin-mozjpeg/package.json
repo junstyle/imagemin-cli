@@ -27,7 +27,8 @@
     "test": "xo && ava"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "imagemin-mozjpeg"
   ],
   "keywords": [
     "compress",
