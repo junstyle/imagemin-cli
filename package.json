@@ -63,6 +63,7 @@
 		"replace-ext": "^1.0.0",
 		"imagemin-gifsicle": "^5.2.0",
 		"imagemin-optipng": "^5.2.1",
+		"imagemin-pngquant": "^5.1.0",
 		"imagemin-svgo": "^6.0.0",
 		"execa": "^0.10.0",
 		"is-jpg": "^2.0.0",
