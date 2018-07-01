@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 'use strict';
 const arrify = require('arrify');
 const meow = require('meow');
@@ -25,37 +26,38 @@ const cli = meow(`
 	  $ cat foo.png | imagemin > foo-optimized.png
 	  $ imagemin --plugin=pngquant foo.png > foo-optimized.png
 `, {
-		flags: {
-			plugin: {
-				type: 'string',
-				alias: 'p',
-			},
-			outDir: {
-				type: 'string',
-				alias: 'o',
-			},
-			overwrite: {
-				type: 'boolean',
-				alias: 'w',
-			}
-		}
-	});
+    flags: {
+        plugin: {
+            type: 'string',
+            alias: 'p',
+        },
+        outDir: {
+            type: 'string',
+            alias: 'o',
+        },
+        overwrite: {
+            type: 'boolean',
+            alias: 'w',
+        }
+    }
+});
 
 const DEFAULT_PLUGINS = [
-	'gifsicle',
-	'mozjpeg',
-	'optipng',
-	'svgo'
+    'gifsicle',
+    'mozjpeg',
+    'pngquant',
+    // 'optipng',
+    'svgo'
 ];
 
 const requirePlugins = plugins => plugins.map(x => {
-	try {
-		return require(`imagemin-${x}`)();
-	} catch (err) {
-		try {
-			return require(`./imagemin-${x}`)();
-		} catch (err) {
-			console.error(stripIndent(`
+    try {
+        return require(`imagemin-${x}`)();
+    } catch (err) {
+        try {
+            return require(`./imagemin-${x}`)();
+        } catch (err) {
+            console.error(stripIndent(`
 				Unknown plugin: ${x}
 
 				Did you forget to install the plugin?
@@ -63,66 +65,71 @@ const requirePlugins = plugins => plugins.map(x => {
 
 				$ npm install -g imagemin-${x}
 			`).trim());
-			process.exit(1);
-		}
-	}
+            process.exit(1);
+        }
+    }
 });
 
 const run = (input, opts) => {
-	opts = Object.assign({
-		plugin: DEFAULT_PLUGINS,
-		overwrite: false
-	}, opts);
+    opts = Object.assign({
+        plugin: DEFAULT_PLUGINS,
+        overwrite: false
+    }, opts);
 
-	const use = requirePlugins(arrify(opts.plugin));
-	const spinner = ora('Minifying images');
+    const use = requirePlugins(arrify(opts.plugin));
+    const spinner = ora('Minifying images');
 
-	if (Buffer.isBuffer(input)) {
-		imagemin.buffer(input, { use }).then(buf => process.stdout.write(buf));
-		return;
-	}
+    if (Buffer.isBuffer(input)) {
+        imagemin.buffer(input, {
+            use
+        }).then(buf => process.stdout.write(buf));
+        return;
+    }
 
-	if (opts.overwrite) {
-		opts.outDir = 'overwrite';
-	}
+    if (opts.overwrite) {
+        opts.outDir = 'overwrite';
+    }
 
-	if (opts.outDir || opts.overwrite) {
-		spinner.start();
-	}
+    if (opts.outDir || opts.overwrite) {
+        spinner.start();
+    }
 
-	imagemin(input, opts.outDir, { use: use, overwrite: opts.overwrite })
-		.then(files => {
-			if (!opts.outDir && files.length === 0) {
-				return;
-			}
+    imagemin(input, opts.outDir, {
+            use: use,
+            overwrite: opts.overwrite
+        })
+        .then(files => {
+            if (!opts.outDir && files.length === 0) {
+                return;
+            }
 
-			if (!opts.outDir && files.length > 1) {
-				console.error('Cannot write multiple files to stdout, specify a `--out-dir`');
-				process.exit(1);
-			}
+            if (!opts.outDir && files.length > 1) {
+                console.error('Cannot write multiple files to stdout, specify a `--out-dir`');
+                process.exit(1);
+            }
 
-			if (!opts.outDir) {
-				process.stdout.write(files[0].data);
-				return;
-			}
+            if (!opts.outDir) {
+                process.stdout.write(files[0].data);
+                return;
+            }
 
-			spinner.stop();
+            spinner.stop();
 
-			console.log(`${files.length} ${plur('image', files.length)} minified`);
-		})
-		.catch(err => {
-			spinner.stop();
-			throw err;
-		});
+            console.log(`${files.length} ${plur('image', files.length)} minified`);
+        })
+        .catch(err => {
+            spinner.stop();
+            throw err;
+        });
 };
 
 if (cli.input.length === 0 && process.stdin.isTTY) {
-	console.error('Specify at least one filename');
-	process.exit(1);
+    console.error('Specify at least one filename');
+    process.exit(1);
 }
 
 if (cli.input.length > 0) {
-	run(cli.input, cli.flags);
+    run(cli.input, cli.flags);
 } else {
-	getStdin.buffer().then(buf => run(buf, cli.flags));
+    getStdin.buffer().then(buf => run(buf, cli.flags));
 }
