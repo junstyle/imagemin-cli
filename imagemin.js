@@ -7,7 +7,6 @@ const makeDir = require('make-dir');
 const pify = require('pify');
 const pPipe = require('p-pipe');
 const replaceExt = require('replace-ext');
-const isGlob = require('is-glob');
 
 const fsP = pify(fs);
 
@@ -67,7 +66,7 @@ module.exports = (input, output, opts) => {
 	// fix if filename contains ()[], glob can't match it
 	let files = [];
 	for (let file of input) {
-		if (isGlob(file) == false && fs.existsSync(file)) {
+		if (fs.existsSync(file)) {
 			files.push(file);
 		}
 	}
