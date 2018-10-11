@@ -7,6 +7,7 @@ const makeDir = require('make-dir');
 const pify = require('pify');
 const pPipe = require('p-pipe');
 const replaceExt = require('replace-ext');
+const isGlob = require('is-glob');
 
 const fsP = pify(fs);
 
@@ -63,9 +64,19 @@ module.exports = (input, output, opts) => {
 	}, opts);
 	opts.plugins = opts.use || opts.plugins;
 
+	// fix if filename contains ()[], glob can't match it
+	let files = [];
+	for (let file of input) {
+		if (isGlob(file) == false && fs.existsSync(file)) {
+			files.push(file);
+		}
+	}
+
 	return globby(input, {
-		nodir: true
-	}).then(paths => Promise.all(paths.map(x => handleFile(x, output, opts))));
+			nodir: true
+		})
+		.then(paths => Promise.all(paths.map(x => handleFile(x, output, opts))))
+		.then(() => Promise.all(files.map(x => handleFile(x, output, opts))));
 };
 
 module.exports.buffer = (input, opts) => {
